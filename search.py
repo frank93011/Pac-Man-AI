@@ -87,34 +87,23 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
-    print "Start:", problem.getStartState()
-    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    print "Start's successors:", problem.getSuccessors(problem.getStartState())
+    # print "Start:", problem.getStartState()
+    # print "Is the start a goal?", problem.isGoalState(problem.getStartState())
+    # print "Start's successors:", problem.getSuccessors(problem.getStartState())
 
-    stack = util.Stack()
-    path = []
-    current = problem.getStartState()
-    stack.push(current)
-    visited = [current]
-    prev = None
-    while(not problem.isGoalState(current)):
-        options = problem.getSuccessors(current)
-        print current
-        pop = True
+    stack = util.Stack() #store the possible node coordinate and the direction lead to that node
+    current = problem.getStartState() 
+    stack.push((current, []))
+    visited = [current] # store all the visited node
+    while(not problem.isGoalState(current) and not stack.isEmpty()):
+        node, path = stack.pop() # the purpose of pop is to eliminate not suitable node if it has no branch
+        options = problem.getSuccessors(node)
+        visited.append(node) 
         for i in options:
-            if(i[0] not in visited):
-                pop = False
+            if(i[0] not in visited): # make sure no node will back to visited track
                 current = i[0]
-                visited.append(current)
-                stack.push(current)
-                path.append(i[1])
-                break
-        prev = current
-        if(pop):
-            current = stack.pop()
-            if(prev != current):
-                print path.pop()
-    print path
+                stack.push((current, path + [i[1]]))
+    _, path = stack.pop()
     return path
 
     util.raiseNotDefined()
