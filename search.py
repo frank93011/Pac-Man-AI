@@ -105,12 +105,27 @@ def depthFirstSearch(problem):
                 stack.push((current, path + [i[1]]))
     _, path = stack.pop()
     return path
-
     util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
+    queue = util.Queue() #store the possible node coordinate and the direction lead to that node
+    current = problem.getStartState() 
+    queue.push((current, []))
+    visited = [current] # store all the visited node
+    while(not problem.isGoalState(current) and not queue.isEmpty()):
+        node, path = queue.pop() # the purpose of pop is to eliminate not suitable node if it has no branch
+        options = problem.getSuccessors(node)
+        visited.append(node) 
+        for i in options:
+            if(i[0] not in visited): # make sure no node will back to visited track
+                current = i[0]
+                direction = i[1]
+                queue.push((current, path + [direction]))
+    print(problem.isGoalState(current))
+    return path+[direction]
+    
     util.raiseNotDefined()
 
 def uniformCostSearch(problem):
