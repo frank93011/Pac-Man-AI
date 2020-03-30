@@ -114,23 +114,46 @@ def breadthFirstSearch(problem):
     current = problem.getStartState() 
     queue.push((current, []))
     visited = [current] # store all the visited node
-    while(not problem.isGoalState(current) and not queue.isEmpty()):
+    while(not queue.isEmpty()):
         node, path = queue.pop() # the purpose of pop is to eliminate not suitable node if it has no branch
+        if(problem.isGoalState(node)):
+            return path
         options = problem.getSuccessors(node)
-        visited.append(node) 
         for i in options:
             if(i[0] not in visited): # make sure no node will back to visited track
                 current = i[0]
                 direction = i[1]
                 queue.push((current, path + [direction]))
+                visited.append(current) 
     print(problem.isGoalState(current))
     return path+[direction]
-    
+
+
     util.raiseNotDefined()
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
+    heap = util.PriorityQueue() #store the possible node coordinate and the direction lead to that node
+    current = problem.getStartState()
+    cost = 0
+    heap.push((current, []), cost)
+    visited = [] # store all the visited node
+    while(not heap.isEmpty()):
+        node, path = heap.pop() # the purpose of pop is to eliminate not suitable node if it has no branch
+        if(problem.isGoalState(node)):
+            return path
+        options = problem.getSuccessors(node)
+        visited.append(node)
+
+        for i in options:
+            if(i[0] not in visited): # make sure no node will back to visited track
+                direction = i[1]
+                cost = problem.getCostOfActions(path+ [direction])
+                heap.update((i[0], path + [direction]), cost)
+        
+    return path
+
     util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
