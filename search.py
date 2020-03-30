@@ -143,15 +143,15 @@ def uniformCostSearch(problem):
         node, path = heap.pop() # the purpose of pop is to eliminate not suitable node if it has no branch
         if(problem.isGoalState(node)):
             return path
-        options = problem.getSuccessors(node)
+        if(node not in visited): # Since the path on the same node could be different in heap, we should prevent the higher cost one to be revisited
+            options = problem.getSuccessors(node)
+            for i in options:
+                if(i[0] not in visited): # make sure no node will back to visited track
+                    direction = i[1]
+                    cost = problem.getCostOfActions(path+ [direction])
+                    heap.update((i[0], path + [direction]), cost)
         visited.append(node)
-
-        for i in options:
-            if(i[0] not in visited): # make sure no node will back to visited track
-                direction = i[1]
-                cost = problem.getCostOfActions(path+ [direction])
-                heap.update((i[0], path + [direction]), cost)
-        
+    
     return path
 
     util.raiseNotDefined()
