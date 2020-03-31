@@ -95,14 +95,14 @@ def depthFirstSearch(problem):
     current = problem.getStartState() 
     stack.push((current, []))
     visited = [current] # store all the visited node
-    while(not problem.isGoalState(current) and not stack.isEmpty()):
+    while(not problem.isGoalState(current)):
         node, path = stack.pop() # the purpose of pop is to eliminate not suitable node if it has no branch
-        options = problem.getSuccessors(node)
-        visited.append(node) 
+        options = problem.getSuccessors(node) # get all possible branch
         for i in options:
             if(i[0] not in visited): # make sure no node will back to visited track
                 current = i[0]
                 stack.push((current, path + [i[1]]))
+        visited.append(node) # only when we insure all possible branch store in stack then we no longer want to back to the visited point
     _, path = stack.pop()
     return path
     util.raiseNotDefined()
@@ -124,8 +124,7 @@ def breadthFirstSearch(problem):
                 current = i[0]
                 direction = i[1]
                 queue.push((current, path + [direction]))
-                visited.append(current) 
-    print(problem.isGoalState(current))
+                visited.append(current)
     return path+[direction]
 
 
@@ -166,6 +165,27 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
+    heap = util.PriorityQueue() #store the possible node coordinate and the direction lead to that node
+    current = problem.getStartState()
+    cost = heuristic(current, problem)
+    heap.push((current, []), cost)
+    visited = [] # store all the visited node
+    while(not heap.isEmpty()):
+        node, path = heap.pop() # the purpose of pop is to eliminate not suitable node if it has no branch
+        if(problem.isGoalState(node)):
+            return path
+        if(node not in visited): # Since the path on the same node could be different in heap, we should prevent the higher cost one to be revisited
+            options = problem.getSuccessors(node)
+            for i in options:
+                if(i[0] not in visited): # make sure no node will back to visited track
+                    direction = i[1]
+                    # print(heuristic(i[0], problem))
+                    cost = problem.getCostOfActions(path+ [direction]) + heuristic(i[0], problem)
+                    heap.update((i[0], path + [direction]), cost)
+        visited.append(node)
+    print(problem.foodGrid.asList())
+    return path
+
     util.raiseNotDefined()
 
 
